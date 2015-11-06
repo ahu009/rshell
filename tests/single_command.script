@@ -1,0 +1,22 @@
+Script started on Fri Nov  6 10:40:18 2015
+[?1034hbash-3.2$ cd rshell
+bash-3.2$ g++ ra[Kshell.c[K[K[K[K[K[K[K[K[K[K[K[Kmake
+g++ -c -Wall -Werror -ansi -pedantic rshell.cpp 
+g++ rshell.o -o rshell 
+bash-3.2$ ./rshell
+rshell$ echo hello world!
+hello world!
+rshell$ touch test.txt
+rshell$ ls
+Makefile	rshell		rshell.cpp	rshell.o	test.txt
+rshell$ touch     mkdir test
+rshell$ ls
+Makefile	rshell.cpp	test
+rshell		rshell.o	test.txt
+rshell$ echo this is the end of the                      single command test
+single command test
+rshell$ exit
+bash-3.2$ exit
+exit
+
+Script done on Fri Nov  6 10:42:14 2015
