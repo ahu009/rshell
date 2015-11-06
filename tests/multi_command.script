@@ -1,0 +1,37 @@
+Script started on Fri Nov  6 10:45:08 2015
+[?1034hbash-3.2$ cd rshell
+bash-3.2$ mu[K[Kmake_[K[K[K[K[Kmake
+g++ -c -Wall -Werror -ansi -pedantic rshell.cpp 
+g++ rshell.o -o rshell 
+bash-3.2$ ./rshell
+rshell$ echo hello ; echo world ; echo !
+hello
+world
+!
+rshell$ echo will run    run;  ; e   && ech  o willrun || echo wontrun
+willrun
+willrun
+rshell$ ls -a; echo        ;   e   -a; echo hello ^^  && mkdir test || echo world
+.		.DS_Store	Makefile	rshell.cpp
+..		.git		rshell		rshell.o
+hello
+rshell$ l echo will       notrealcommand &&  || echo willrun
+Command not recognized: No such file or directory
+willrun
+rshell$ echo rel alcommand || echo wont run    run
+realcommand
+rshell$ echo    notrealcommand && echo wontrun
+Command not recognized: No such file or directory
+rshell$ echo real command && echo will  run^[[D    
+real command
+willrun
+rshell$ echo end; echo of; ech tes    o test; echo !
+end
+of
+test
+!
+rshell$ exit
+bash-3.2$ exit
+exit
+
+Script done on Fri Nov  6 10:48:46 2015
