@@ -1,0 +1,27 @@
+Script started on Fri Nov  6 11:05:15 2015
+[?1034hbash-3.2$ cd rshell
+bash-3.2$ rshell -a[K[K[K[K[K[K[K[K[Kmake
+g++ -c -Wall -Werror -ansi -pedantic rshell.cpp 
+g++ rshell.o -o rshell 
+bash-3.2$ ./rshell
+rshell$ hello     exit
+bash-3.2$ ./rshell
+rshell$ #exit
+rshell$ ls && exit
+Makefile	rshell		rshell.cpp	rshell.o
+bash-3.2$ ./rshell
+rshell$ ls || rshell      exit
+Makefile	rshell		rshell.cpp	rshell.o
+rshell$ exit ||       eh cho wo  helloworld ; ls ; exit
+helloworld
+Makefile	rshell		rshell.cpp	rshell.o
+bash-3.2$ ./rshell
+rshell$ echo hi || hello &&]   ; exit                       hello     notrealcommand || exit
+Command not recognized: No such file or directory
+bash-3.2$ exit[K[K[K[K./rshell
+rshell$ ls  echo hi; echo by         || echo bye && exit
+hi
+bash-3.2$ exit
+exit
+
+Script done on Fri Nov  6 11:07:51 2015
