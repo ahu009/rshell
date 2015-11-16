@@ -7,7 +7,7 @@ rshell: rshell.o
 	$(COMPILE) rshell.o -o rshell 
 
 rshell.o: rshell.cpp 
-	$(COMPILE) -c -Wall -Werror -ansi -pedantic rshell.cpp 
+	$(COMPILE) -c -Werror -ansi -pedantic rshell.cpp 
 
 move:	
 	mv rshell ../bin
