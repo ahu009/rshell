@@ -1,3 +1,4 @@
+
 COMPILE=g++
 FLAGS=-Wall -Werror -ansi -pedantic
 
