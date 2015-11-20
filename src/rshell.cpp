@@ -10,9 +10,177 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sys/stat.h>
 
 using namespace std;
 
+void formatString(string& cmd){
+	while(cmd.at(0) == ' '){
+		cmd.erase(0,1);
+	}
+	while(cmd.at(cmd.size() - 1) == ' '){
+		cmd.erase(cmd.size() - 1, 1);
+	}
+}
+
+const char* string2cstring(string cmd){
+	return cmd.c_str();
+}
+
+bool isDirectory(const char* cmd){
+	struct stat fileStat;
+	if (stat(cmd, &fileStat) < 0){
+		return false;
+	}
+	if (S_ISDIR(fileStat.st_mode)){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+bool isFile(const char* cmd){
+	struct stat fileStat;
+	if (stat(cmd, &fileStat) < 0){
+		return false;
+	}
+	if (S_ISREG(fileStat.st_mode)){
+		return true;
+	}
+	else{
+		return false;
+	}
+} 
+
+bool doesExist(const char* cmd){
+	struct stat fileStat;
+	if (stat(cmd, &fileStat) < 0){
+		return false;
+	}
+	else{
+		return true;
+	}
+}
+
+bool isSymbol(string& cmd){
+	bool openFound = false;
+	bool closeFound = false;
+	int indexOpen;
+	int indexClose;
+	for(int i = 0; i < cmd.size(); i++){
+		if (cmd.at(i) == '['){
+			//cmd.erase(i, 1);
+			indexOpen = i;
+			openFound = true;
+		}
+		if (cmd.at(i) == ']'){
+			//cmd.erase(i, 1);
+			indexClose = i;
+			closeFound = true;
+		}
+	}
+	if(closeFound && openFound){
+	//	cout << cmd << endl;
+		cmd.erase(indexOpen, 1);
+		cmd.erase(indexClose - 1, 1);
+	//	cout << "indexClose: " << indexClose << endl;
+		formatString(cmd);
+	//	cout << cmd << endl;
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+bool isTest(string& cmd){
+	size_t found = cmd.find("test ");
+	if (found != string::npos){
+		if (found < 1){
+			cmd.erase(0,5);
+			formatString(cmd);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	else{
+		return false;
+	}
+} 
+
+bool eFlag(string& cmd){
+	size_t found = cmd.find("-e ");
+	if (found != string::npos){
+		if(found < 1){
+			cmd.erase(0,3);
+			formatString(cmd);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	else{
+		return false;
+	}	
+}
+
+bool fFlag(string& cmd){
+	size_t found = cmd.find("-f ");
+	if (found != string::npos){
+		if(found < 1){
+			cmd.erase(0,3);
+			formatString(cmd);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	else{
+		return false;
+	}	
+}
+
+bool dFlag(string& cmd){
+	size_t found = cmd.find("-d ");
+	if (found != string::npos){
+		if(found < 1){
+			cmd.erase(0,3);
+			formatString(cmd);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	else{
+		return false;
+	}	
+}
+
+bool hasOpenPara(string& cmd){
+	for (int i = 0; i < cmd.size(); i++){
+		if (cmd.at(i) == '('){
+			cmd.erase(i,1);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool hasClosePara(string& cmd){
+	for (int i = 0; i < cmd.size(); i++){
+		if (cmd.at(i) == ')'){
+			cmd.erase(i,1);
+			return true;
+		}
+	}
+	return false;
+}
 //parse command and push into array as separate command and arguments
 void parseCommand(string command, char * args[]){
     vector<string> cmd;
@@ -46,6 +214,7 @@ void parseCommand(string command, char * args[]){
     args[i] = NULL; //append NULL to array(must have for execVP()
 
 }
+
 void execVP(string command, bool& isFail){
     size_t found = command.find("exit");
     if (found != string::npos){
@@ -90,23 +259,149 @@ void execVP(string command, bool& isFail){
     }
 }
 
-
+//##need to add functionality for multiple paranthesis -- do later if have time
 //run all elements of vector in process into execVP
 void process(vector<string> cmd, vector<string> connector){
+    bool hasParanthesis = false;
+    bool blockPass = false;
+    bool hadPara = false;
+    bool didSkip = false;
+    bool testResult = false;
+    bool hasTest = false;
+    //bool testResult = false;
     for (int i = 0; i < cmd.size(); i++){
-	bool isFail = false;
-	execVP(cmd.at(i), isFail);
+	if (hadPara){
+		hadPara = false;
+	}
+	if (hasOpenPara(cmd.at(i))){
+		//hasParanthesis = true;
+		blockPass = false;
+	}
+	if (hasClosePara(cmd.at(i))){
+		//hasParanthesis = false;
+		hadPara = true;
+	}
+	hasTest = false;
+	if (isTest(cmd.at(i))){
+		hasTest = true;
+		if (fFlag(cmd.at(i))){
+			testResult = isFile(string2cstring(cmd.at(i)));
+		}
+		else if (dFlag(cmd.at(i))){
+			//cout << "dFlag hit" << endl;
+			testResult = isDirectory(string2cstring(cmd.at(i)));
+		}
+		else if(eFlag(cmd.at(i))){
+			testResult = doesExist(string2cstring(cmd.at(i)));
+		}
+		else{
+			//cout << "hit" << endl;
+			testResult = doesExist(string2cstring(cmd.at(i)));
+		}	
+	}
+	else if (isSymbol(cmd.at(i))){
+		hasTest = true;
+		if (fFlag(cmd.at(i))){
+			testResult = isFile(string2cstring(cmd.at(i)));	
+		}
+		else if (dFlag(cmd.at(i))){
+			testResult = isDirectory(string2cstring(cmd.at(i)));
+		}
+		else if (eFlag(cmd.at(i))){
+			testResult = doesExist(string2cstring(cmd.at(i)));
+		}
+		else{
+			testResult = doesExist(string2cstring(cmd.at(i)));
+		}
+	}
+	
+
+	bool isFail = false; //checks if command fails
+	if (hasTest){
+		isFail = !testResult;
+		//if(isFail) {cout << "true" << endl;}
+		//else{cout << "false" << endl;}
+	}
+	else{
+		execVP(cmd.at(i), isFail);
+	}
+
+	if (!isFail){
+		blockPass = true;
+	}
+	//cout << "i: " << i << endl;
+	if (i - 1 >= 0 && isFail && connector.at(i - 1) == "&&"){
+		//cout << "checkpoint hit" << endl;
+		blockPass = false;
+	}
+
+//	if (!isFail
+
+	if (!hadPara){
+		//cout << "!hadPara hit" << endl;
 	//functionality for || and && (multiple commands)
-	if (connector.at(i) == "||" && !isFail){
-	    //cout << "|| hit" << endl;
-	    i++;
+		if (connector.at(i) == "||" && !isFail){
+	    	//cout << "|| hit" << endl;
+			if (hasClosePara(cmd.at(i + 1))){
+			//	cout << "hit" << endl;
+				didSkip = true;
+			}
+			else{
+				didSkip = false;
+			}
+			i++;
+		}
+		else if (connector.at(i) == "&&" && isFail){
+	    		//cout << "&& hit" << endl;
+			//blockPass = false;
+			if (hasClosePara(cmd.at(i + 1))){
+				didSkip = true;
+			}
+			else{
+				didSkip = false;
+			}
+			i++;
+		}
 	}
-	else if (connector.at(i) == "&&" && isFail){
-	    //cout << "&& hit" << endl;
-	    i++;
+	if (didSkip){
+		hadPara = true;
+	//	cout << "didSkip hit" << endl;
 	}
+	if (hadPara){
+		if (connector.at(i) == "||" && blockPass){
+			if(hasOpenPara(cmd.at(i + 1))){
+				i++;
+				//cout << "hadPara || hit" << endl;
+				//cout << cmd.at(i) << " ";
+				while (!hasClosePara(cmd.at(i))){
+					//cout << cmd.at(i) << " ";
+					i++;
+				}
+			}
+			else{
+				i++;
+			}
+		}
+		else if (connector.at(i) == "&&" && !blockPass){
+	  		if(hasOpenPara(cmd.at(i + 1))){
+				i++;
+				//cout << "hadPara && hit" << endl;
+				while (!hasClosePara(cmd.at(i))){
+					i++;
+				}
+			}
+			else{
+	    			i++;
+			}
+		}
+	}
+
+
     }
 }
+
+
+
 
 //pushes all connectors in command line to a vector 
 void connector2Vector (char command[], vector<string>& connector){
@@ -144,7 +439,7 @@ void push2Vector (char command[], vector<string>& Cmd){
 //formats commands: deletes spaces before individual commands in vector
 void formatVector(vector<string>& cmd){
     for (int i = 0; i < cmd.size(); i++){
-	if (cmd.at(i).at(0) == ' '){
+	while (cmd.at(i).at(0) == ' '){
 	    cmd.at(i).erase(0,1);
 	} 
 	while (cmd.at(i).at(cmd.at(i).size() - 1) == ' '){
@@ -183,6 +478,8 @@ void checkComments(char command[]){
     }
 }
 
+
+
 int main()
 {
     //continous loop
@@ -201,8 +498,12 @@ int main()
 	//Vectors for connectors and commands respectively
 	connector2Vector(command, connector); 
 	push2Vector(command, cmd);
+	
+	//printVector(cmd);
 
 	formatVector(cmd); //formats vector holding commands
+	
+	//printVector(cmd);
 	
 	clearArray(command);
 	process(cmd, connector);
