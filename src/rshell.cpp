@@ -74,7 +74,7 @@ bool isSymbol(string& cmd){
 	bool closeFound = false;
 	int indexOpen;
 	int indexClose;
-	for(int i = 0; i < cmd.size(); i++){
+	for (int i = 0; i < cmd.size(); i++){
 		if (cmd.at(i) == '['){
 			indexOpen = i;
 			openFound = true;
@@ -84,7 +84,7 @@ bool isSymbol(string& cmd){
 			closeFound = true;
 		}
 	}
-	if(closeFound && openFound){
+	if (closeFound && openFound){
 		cmd.erase(indexOpen, 1);
 		cmd.erase(indexClose - 1, 1);
 		formatString(cmd);
@@ -118,7 +118,7 @@ bool isTest(string& cmd){
 bool eFlag(string& cmd){
 	size_t found = cmd.find("-e ");
 	if (found != string::npos){
-		if(found < 1){
+		if (found < 1){
 			cmd.erase(0,3);
 			formatString(cmd);
 			return true;
@@ -137,7 +137,7 @@ bool eFlag(string& cmd){
 bool fFlag(string& cmd){
 	size_t found = cmd.find("-f ");
 	if (found != string::npos){
-		if(found < 1){
+		if (found < 1){
 			cmd.erase(0,3);
 			formatString(cmd);
 			return true;
@@ -156,7 +156,7 @@ bool fFlag(string& cmd){
 bool dFlag(string& cmd){
 	size_t found = cmd.find("-d ");
 	if (found != string::npos){
-		if(found < 1){
+		if (found < 1){
 			cmd.erase(0,3);
 			formatString(cmd);
 			return true;
@@ -246,7 +246,7 @@ void execVP(string command, bool& isFail){
     c_pid = fork();
   	
     //execvp forking/wait 
-    if ( c_pid < 0)
+    if (c_pid < 0)
     {
     	perror("fork failed");
     	exit(1);
