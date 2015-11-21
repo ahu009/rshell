@@ -14,6 +14,7 @@
 
 using namespace std;
 
+//deletes whitespaces before and after command
 void formatString(string& cmd){
 	while(cmd.at(0) == ' '){
 		cmd.erase(0,1);
@@ -23,10 +24,12 @@ void formatString(string& cmd){
 	}
 }
 
+//turns string into cstring
 const char* string2cstring(string cmd){
 	return cmd.c_str();
 }
 
+//checks if user input is directory
 bool isDirectory(const char* cmd){
 	struct stat fileStat;
 	if (stat(cmd, &fileStat) < 0){
@@ -40,6 +43,7 @@ bool isDirectory(const char* cmd){
 	}
 }
 
+//checks if user input is a file
 bool isFile(const char* cmd){
 	struct stat fileStat;
 	if (stat(cmd, &fileStat) < 0){
@@ -53,6 +57,7 @@ bool isFile(const char* cmd){
 	}
 } 
 
+//checks if user input exists
 bool doesExist(const char* cmd){
 	struct stat fileStat;
 	if (stat(cmd, &fileStat) < 0){
@@ -63,6 +68,7 @@ bool doesExist(const char* cmd){
 	}
 }
 
+//checks to see if user uses '[ ]' symbol to test 
 bool isSymbol(string& cmd){
 	bool openFound = false;
 	bool closeFound = false;
@@ -70,23 +76,18 @@ bool isSymbol(string& cmd){
 	int indexClose;
 	for(int i = 0; i < cmd.size(); i++){
 		if (cmd.at(i) == '['){
-			//cmd.erase(i, 1);
 			indexOpen = i;
 			openFound = true;
 		}
 		if (cmd.at(i) == ']'){
-			//cmd.erase(i, 1);
 			indexClose = i;
 			closeFound = true;
 		}
 	}
 	if(closeFound && openFound){
-	//	cout << cmd << endl;
 		cmd.erase(indexOpen, 1);
 		cmd.erase(indexClose - 1, 1);
-	//	cout << "indexClose: " << indexClose << endl;
 		formatString(cmd);
-	//	cout << cmd << endl;
 		return true;
 	}
 	else{
@@ -94,6 +95,7 @@ bool isSymbol(string& cmd){
 	}
 }
 
+//checks if user uses 'test' keyword to test
 bool isTest(string& cmd){
 	size_t found = cmd.find("test ");
 	if (found != string::npos){
@@ -111,6 +113,8 @@ bool isTest(string& cmd){
 	}
 } 
 
+//checks if user uses '-e ' flag 
+//and removes the flag from string if true
 bool eFlag(string& cmd){
 	size_t found = cmd.find("-e ");
 	if (found != string::npos){
@@ -128,6 +132,8 @@ bool eFlag(string& cmd){
 	}	
 }
 
+//checks if user uses '-f ' flag 
+//and removes the flag from string if true
 bool fFlag(string& cmd){
 	size_t found = cmd.find("-f ");
 	if (found != string::npos){
@@ -145,6 +151,8 @@ bool fFlag(string& cmd){
 	}	
 }
 
+//checks for '-d ' flag
+//removes if true
 bool dFlag(string& cmd){
 	size_t found = cmd.find("-d ");
 	if (found != string::npos){
@@ -162,6 +170,8 @@ bool dFlag(string& cmd){
 	}	
 }
 
+//checks if command has opening paranthesis
+//removes if true
 bool hasOpenPara(string& cmd){
 	for (int i = 0; i < cmd.size(); i++){
 		if (cmd.at(i) == '('){
@@ -172,6 +182,8 @@ bool hasOpenPara(string& cmd){
 	return false;
 }
 
+//checks if command has closing paranthesis
+//removes if true
 bool hasClosePara(string& cmd){
 	for (int i = 0; i < cmd.size(); i++){
 		if (cmd.at(i) == ')'){
@@ -181,6 +193,7 @@ bool hasClosePara(string& cmd){
 	}
 	return false;
 }
+
 //parse command and push into array as separate command and arguments
 void parseCommand(string command, char * args[]){
     vector<string> cmd;
@@ -240,15 +253,14 @@ void execVP(string command, bool& isFail){
     }
 
     else if (c_pid == 0)
-    {                                                                                                                                                                      execvp(args[0], args);   
-                                                     
+    {                                                                                                                                                                      execvp(args[0], args);                                      
     	perror("Command not recognized");
 	exit(1);
     
     }
     else if (c_pid > 0)
     {
-        if( (pid = wait(&status)) < 0)
+        if ((pid = wait(&status)) < 0)
     	{
       	    perror("wait");
       	    exit(1);
@@ -259,7 +271,6 @@ void execVP(string command, bool& isFail){
     }
 }
 
-//##need to add functionality for multiple paranthesis -- do later if have time
 //run all elements of vector in process into execVP
 void process(vector<string> cmd, vector<string> connector){
     bool hasParanthesis = false;
@@ -268,17 +279,14 @@ void process(vector<string> cmd, vector<string> connector){
     bool didSkip = false;
     bool testResult = false;
     bool hasTest = false;
-    //bool testResult = false;
     for (int i = 0; i < cmd.size(); i++){
 	if (hadPara){
 		hadPara = false;
 	}
 	if (hasOpenPara(cmd.at(i))){
-		//hasParanthesis = true;
 		blockPass = false;
 	}
 	if (hasClosePara(cmd.at(i))){
-		//hasParanthesis = false;
 		hadPara = true;
 	}
 	hasTest = false;
@@ -288,14 +296,12 @@ void process(vector<string> cmd, vector<string> connector){
 			testResult = isFile(string2cstring(cmd.at(i)));
 		}
 		else if (dFlag(cmd.at(i))){
-			//cout << "dFlag hit" << endl;
 			testResult = isDirectory(string2cstring(cmd.at(i)));
 		}
 		else if(eFlag(cmd.at(i))){
 			testResult = doesExist(string2cstring(cmd.at(i)));
 		}
 		else{
-			//cout << "hit" << endl;
 			testResult = doesExist(string2cstring(cmd.at(i)));
 		}	
 	}
@@ -319,8 +325,6 @@ void process(vector<string> cmd, vector<string> connector){
 	bool isFail = false; //checks if command fails
 	if (hasTest){
 		isFail = !testResult;
-		//if(isFail) {cout << "true" << endl;}
-		//else{cout << "false" << endl;}
 	}
 	else{
 		execVP(cmd.at(i), isFail);
@@ -329,19 +333,13 @@ void process(vector<string> cmd, vector<string> connector){
 	if (!isFail){
 		blockPass = true;
 	}
-	//cout << "i: " << i << endl;
 	if (i - 1 >= 0 && isFail && connector.at(i - 1) == "&&"){
-		//cout << "checkpoint hit" << endl;
 		blockPass = false;
 	}
 
-//	if (!isFail
-
 	if (!hadPara){
-		//cout << "!hadPara hit" << endl;
 	//functionality for || and && (multiple commands)
 		if (connector.at(i) == "||" && !isFail){
-	    	//cout << "|| hit" << endl;
 			if (hasClosePara(cmd.at(i + 1))){
 			//	cout << "hit" << endl;
 				didSkip = true;
@@ -365,16 +363,12 @@ void process(vector<string> cmd, vector<string> connector){
 	}
 	if (didSkip){
 		hadPara = true;
-	//	cout << "didSkip hit" << endl;
 	}
 	if (hadPara){
 		if (connector.at(i) == "||" && blockPass){
 			if(hasOpenPara(cmd.at(i + 1))){
 				i++;
-				//cout << "hadPara || hit" << endl;
-				//cout << cmd.at(i) << " ";
 				while (!hasClosePara(cmd.at(i))){
-					//cout << cmd.at(i) << " ";
 					i++;
 				}
 			}
@@ -385,7 +379,6 @@ void process(vector<string> cmd, vector<string> connector){
 		else if (connector.at(i) == "&&" && !blockPass){
 	  		if(hasOpenPara(cmd.at(i + 1))){
 				i++;
-				//cout << "hadPara && hit" << endl;
 				while (!hasClosePara(cmd.at(i))){
 					i++;
 				}
@@ -399,9 +392,6 @@ void process(vector<string> cmd, vector<string> connector){
 
     }
 }
-
-
-
 
 //pushes all connectors in command line to a vector 
 void connector2Vector (char command[], vector<string>& connector){
@@ -436,7 +426,7 @@ void push2Vector (char command[], vector<string>& Cmd){
         Cmd.push_back(temp);
     }
 }
-//formats commands: deletes spaces before individual commands in vector
+//deletes spaces before individual commands in vector
 void formatVector(vector<string>& cmd){
     for (int i = 0; i < cmd.size(); i++){
 	while (cmd.at(i).at(0) == ' '){
@@ -478,8 +468,6 @@ void checkComments(char command[]){
     }
 }
 
-
-
 int main()
 {
     //continous loop
@@ -499,12 +487,8 @@ int main()
 	connector2Vector(command, connector); 
 	push2Vector(command, cmd);
 	
-	//printVector(cmd);
-
 	formatVector(cmd); //formats vector holding commands
-	
-	//printVector(cmd);
-	
+		
 	clearArray(command);
 	process(cmd, connector);
 	clearArray(command); //flushes array
