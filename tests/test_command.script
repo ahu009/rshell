@@ -1,0 +1,46 @@
+Script started on Fri Nov 20 16:15:08 2015
+[?1034hbash-3.2$ cd ..
+bash-3.2$ make
+mkdir bin; cd src; make
+mkdir: bin: File exists
+g++ -c -Werror -ansi -pedantic rshell.cpp 
+g++ rshell.o -o rshell 
+mv rshell ../bin
+bash-3.2$ bin/rshell
+rshell$ test    ls
+LICENSE.GPL	README.md	src
+Makefile	bin		tests
+rshell$ test -e README.md && echo file exists
+file exists
+rshell$ test README>md   .md && f echo file exists
+file exists
+rshell$ res   test nosuchfile && eh cho d shouldnt run
+rshell$ test -e nosuchfile && echo shouldnt run
+rshell$ test -d src && echo directory exists
+directory exists
+rshell$ test -f README.md && echo file    is file
+is file
+rshell$ test -f README      src && echo is not a file
+rshell$ test -d README.md && echo is not a directory
+rshell$ [test    -e README.md] && echo is a file         ei xists
+exists
+rshell$ [-e Read   EADME.       src] && echo exists
+exists
+rshell$ [README.md] && exists
+Command not recognized: No such file or directory
+rshell$ [README/ .md] && echo oops exust   ists
+oops exists
+rshell$ [-d src] && directory exists
+Command not recognized: No such file or directory
+rshell$ [-f d src] && d oops directory exists                     echo oops directory exists
+oops directory exists
+rshell$ [-f src] && is  echo is not a file
+rshell$ [-  (test -e README.md && [-d src]) && echo should run
+should run
+rshell$ exit    echo done
+done
+rshell$ exit
+bash-3.2$ exit
+exit
+
+Script done on Fri Nov 20 16:20:19 2015

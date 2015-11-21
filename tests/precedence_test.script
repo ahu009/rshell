@@ -1,0 +1,77 @@
+Script started on Fri Nov 20 17:08:57 2015
+[?1034hbash-3.2$ cd..
+bash: cd..: command not found
+bash-3.2$ make
+make: *** No targets specified and no makefile found.  Stop.
+bash-3.2$ ls
+commented_command.script	precedence_test.script
+exit.script			single_command.script
+multi_command.script		test_command.script
+bash-3.2$ cd ..
+bash-3.2$ ls
+LICENSE.GPL	README.md	src
+Makefile	bin		tests
+bash-3.2$ make
+mkdir bin; cd src; make
+mkdir: bin: File exists
+g++ rshell.o -o rshell 
+mv rshell ../bin
+bash-3.2$ bin/rshell
+rshell$ h (echo A && echo B) || (echo C && echo D)
+A
+B
+rshell$ (echo A && fail) || echo should run
+A
+Command not recognized: No such file or directory
+should run
+rshell$ (echo    fail echo A      && echo A) || echo should run
+Command not recognized: No such file or directory
+should run
+rshell$ (f echo pass && echo also pass) || echo shouldnt run
+pass
+also pass
+rshell$ (echo pass    A && echo B) && echo should un  run
+A
+B
+should run
+rshell$ echo      ec  fail && f         (fail && fail)               echo A || echo f        fail) && echo should run
+A
+should run
+rshell$ (echo A || fail) || s ech  o shouldnt run
+A
+rshell$ (fail || echo A) || echo shouldn run    t run
+Command not recognized: No such file or directory
+A
+rshell$ (fail || echo    fail) || echo should run
+Command not recognized: No such file or directory
+Command not recognized: No such file or directory
+should run
+rshell$ (fail || echo A) && echo should run
+Command not recognized: No such file or directory
+A
+should run
+rshell$ (echo A && echo BB  && echo C) & (  & (echo A          || (echo A       echo shouldnt run
+A
+B
+C
+rshell$ (echo      fail || fail || eh cho A) && echo should run
+Command not recognized: No such file or directory
+Command not recognized: No such file or directory
+A
+should run
+rshell$ (fail || fail || fai                   echo A && echo B && echo C && fail) || echo should run
+A
+B
+C
+Command not recognized: No such file or directory
+should run
+rshell$ (echo A && echo B && echo C && fail) && echo shouldnt run
+A
+B
+C
+Command not recognized: No such file or directory
+rshell$ exit
+bash-3.2$ exit
+exit
+
+Script done on Fri Nov 20 17:14:16 2015
