@@ -14,6 +14,15 @@
 
 using namespace std;
 
+void hotfix(string& fix){
+	while (fix.at(0) == '('){
+		fix.erase(0,1);
+	}
+	while (fix.at(fix.size() - 1) == ')'){
+		fix.erase(fix.size() - 1, 1);
+	}
+}
+
 //deletes whitespaces before and after command
 void formatString(string& cmd){
 	while(cmd.at(0) == ' '){
@@ -327,6 +336,8 @@ void process(vector<string> cmd, vector<string> connector){
 		isFail = !testResult;
 	}
 	else{
+		hotfix(cmd.at(i));
+	//	cout << cmd.at(i) << endl;
 		execVP(cmd.at(i), isFail);
 	}
 
