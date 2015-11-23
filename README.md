@@ -3,3 +3,14 @@ List of known bugs include:
 -Breaks input when inserting peculiar amount of whitespace into command line
 -Breaks when using connector without following command
 -Sometimes does not recognize known commmands when using comments in certain way.
+
+                                             
+Design: 
+- added code into "process" function
+- any changes / additional features should be added into "process" function
+- created ~5 more functions for functionality of test keyword with flags "-e, -f, -d".
+	- parsed command in form of string for each flag. 
+	- parsed command for opening and closing brackets, '[' and ']'
+	- parsed command for "test".
+- created ~3 more functions for functionality of precendence.
+- 
