@@ -1,5 +1,3 @@
-This is Homework 2 for CS100 at UC Riverside. This is a basic shell written in C++. Added on the "test"([ ]) functionality onto homework 1 as long as precedence using paranthesis.
-                                                              
 Bugs:
 - Breaks input when inserting peculiar amount of whitespace into command line
 - Breaks when using connector without following command
